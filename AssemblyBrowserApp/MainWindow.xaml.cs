@@ -23,6 +23,8 @@ namespace AssemblyBrowserApp
         public MainWindow()
         {
             InitializeComponent();
+
+            DataContext = new ViewModel();
         }
     }
 }
