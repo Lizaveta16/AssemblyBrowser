@@ -16,7 +16,6 @@ namespace AssemblyBrowserLib.Data.MembersInfo
         }
         private static string GetTypeAccessorModifiers(FieldInfo filedInfo)
         {
-            // new 
             if (filedInfo.IsPublic)
                 return "public";
             if (filedInfo.IsPrivate)

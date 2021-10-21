@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace AssemblyBrowserLib.Data.MembersInfo
 {
@@ -20,7 +21,6 @@ namespace AssemblyBrowserLib.Data.MembersInfo
         }
         private static string GetTypeAccessorModifiers(ConstructorInfo constrInfo)
         {
-            // new 
             if (constrInfo.IsPublic)
                 return "public";
             if (constrInfo.IsPrivate)

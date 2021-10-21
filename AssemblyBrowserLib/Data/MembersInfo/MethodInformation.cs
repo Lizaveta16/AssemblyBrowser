@@ -5,7 +5,7 @@ using System.Text;
 
 namespace AssemblyBrowserLib.Data.MembersInfo
 {
-    class MethodInformation
+    public static class MethodInformation
     {
         public static string GetInfo(System.Reflection.MethodInfo methodInfo)
         {
@@ -16,7 +16,6 @@ namespace AssemblyBrowserLib.Data.MembersInfo
 
         private static string GetTypeAccessorModifiers(System.Reflection.MethodInfo methodInfo)
         {
-            // new 
             if (methodInfo.IsPublic)
                 return "public";
             if (methodInfo.IsPrivate)

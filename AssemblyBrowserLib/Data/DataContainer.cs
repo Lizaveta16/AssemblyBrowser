@@ -4,18 +4,18 @@ using System.Text;
 
 namespace AssemblyBrowserLib.Data
 {
-    public class DataContainer : MemberInfo
+    public class DataContainer : MemberInformation
     {
-        public List<MemberInfo> Members { get; set; }
+        public List<MemberInformation> Members { get; set; }
 
-        public DataContainer(string @namespace, string @class, string signature, List<MemberInfo> members) : base(@namespace, @class)
+        public DataContainer(string @namespace, string @class, string signature, List<MemberInformation> members) : base(@namespace, @class)
         {
             Signature = signature;
             Members = members;
         }
         public DataContainer(string @namespace, string @class) : base(@namespace, @class)
         {
-            Members = new List<MemberInfo>();
+            Members = new List<MemberInformation>();
         }
     }
 }
