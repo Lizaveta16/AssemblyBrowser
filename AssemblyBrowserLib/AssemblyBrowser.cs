@@ -28,6 +28,9 @@ namespace AssemblyBrowserLib
 
                     container.Members.Add(GetMembers(type));
 
+                    if (type.IsDefined(typeof(ExtensionAttribute), false))
+                        assemblyInfo = GetExtensionNamespaces(type, assemblyInfo);
+
                 }
                 catch (NullReferenceException e) { Console.WriteLine(e.StackTrace); }
             }
@@ -80,6 +83,32 @@ namespace AssemblyBrowserLib
         private static IEnumerable<MemberInformation> GetConstructors(Type type)
         {
             return type.GetConstructors().Select(constructor => new MemberInformation(ConstructorInformation.GetInfo(constructor), ClassInformation.GetInfo(type))).ToArray();
+        }
+
+        private static Dictionary<string, DataContainer> GetExtensionNamespaces(Type classType, Dictionary<string, DataContainer> assemblyInfo)
+        {
+
+            var extensionClasses = new Dictionary<string, DataContainer>();
+
+            foreach (var method in classType.GetMethods(Static | Public | NonPublic))
+            {
+                if (!classType.IsDefined(typeof(ExtensionAttribute), false) ||
+                    !method.IsDefined(typeof(ExtensionAttribute), false)) continue;
+
+                var type = method.GetParameters()[0].ParameterType;
+
+                if (!assemblyInfo.ContainsKey(type.Namespace))
+                    assemblyInfo.Add(type.Namespace, new DataContainer(type.Namespace, ClassInformation.GetInfo(type)));
+
+                DataContainer @class = new DataContainer(ClassInformation.GetInfo(type), ClassInformation.GetInfo(type));
+                @class.Members.Add(new MemberInformation(MethodInformation.GetInfo(method) + " — extension method", ClassInformation.GetInfo(classType)));
+
+                assemblyInfo.TryGetValue(type.Namespace, out var container);
+                container.Members.Add(@class);
+
+            }
+
+            return assemblyInfo;
         }
     }
 }

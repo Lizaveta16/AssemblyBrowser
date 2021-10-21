@@ -17,7 +17,7 @@ namespace AssemblyBrowserLib.Data.MembersInfo
 
         private static string GetName(ConstructorInfo constrInfo)
         {
-            return constrInfo.Name;
+            return constrInfo.DeclaringType.Name;
         }
         private static string GetTypeAccessorModifiers(ConstructorInfo constrInfo)
         {
