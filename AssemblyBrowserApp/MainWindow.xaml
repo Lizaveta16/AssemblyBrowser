@@ -9,23 +9,13 @@
     <Grid>
         <Menu DockPanel.Dock="Top" FontSize="20">
             <MenuItem Header="File">
-                <MenuItem Header="Open" Command="{Binding OpenFile}"></MenuItem>
+                <MenuItem Header="Open" Command="{Binding OpenFileCommand}"></MenuItem>
             </MenuItem>
         </Menu>
-        <TreeView ItemsSource="{Binding NamespacesData}" Margin="0,40,0,-2.6" HorizontalAlignment="Left" Width="1275">
+        <TreeView ItemsSource="{Binding Path=Namespaces}" Margin="0,40,0,-2.6" HorizontalAlignment="Left" Width="1275">
             <TreeView.ItemTemplate>
-                <HierarchicalDataTemplate ItemsSource="{Binding Path=Types}">
-                    <TextBlock Text="{Binding Name}" FontSize="20"/>
-                    <HierarchicalDataTemplate.ItemTemplate>
-                        <HierarchicalDataTemplate ItemsSource="{Binding Path=Members}">
-                            <TextBlock Text="{Binding ContainerDeclaration}" FontSize="20"/>
-                            <HierarchicalDataTemplate.ItemTemplate>
-                                <DataTemplate>
-                                    <TextBlock Text="{Binding ContainerDeclaration}" FontSize="20"/>
-                                </DataTemplate>
-                            </HierarchicalDataTemplate.ItemTemplate>
-                        </HierarchicalDataTemplate>
-                    </HierarchicalDataTemplate.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding Path=Members}">
+                    <TextBlock Text="{Binding Signature, UpdateSourceTrigger=PropertyChanged}" />
                 </HierarchicalDataTemplate>
             </TreeView.ItemTemplate>
         </TreeView>
