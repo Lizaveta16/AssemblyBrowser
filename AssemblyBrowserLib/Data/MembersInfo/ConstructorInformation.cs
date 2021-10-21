@@ -2,57 +2,61 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-using System.Text.RegularExpressions;
 
 namespace AssemblyBrowserLib.Data.MembersInfo
 {
-    public static class PropertyInformation
+    public static class ConstructorInformation
     {
-        public static string GetInfo(PropertyInfo propertyInfo)
+        public static string GetInfo(ConstructorInfo constrInfo)
         {
-            var result = string.Join(" ", GetTypeAccessorModifiers(propertyInfo.GetGetMethod(true)),
-                GetType(propertyInfo), propertyInfo.Name, GetPropertyAccessors(propertyInfo));
+            var result = string.Join(" ", GetTypeAccessorModifiers(constrInfo),
+                GetName(constrInfo), GetConstructArguments(constrInfo));
             return result;
         }
-        private static string GetPropertyAccessors(PropertyInfo propertyInfo)
+
+        private static string GetName(ConstructorInfo constrInfo)
         {
-            const string begin = "{", end = "}", separator = "; ";
-
-            var accessors = propertyInfo.GetAccessors(true);
-            var stringBuilder = new StringBuilder(begin).Append(" ");
-
-            foreach (var accessor in accessors)
-            {
-                if (accessor.IsSpecialName)
-                {
-                    stringBuilder.Append(GetTypeAccessorModifiers(accessor)).Append(" ").Append(accessor.Name).Append(separator);
-                }
-
-            }
-            stringBuilder.Append(end);
-
-            return stringBuilder.ToString();
+            return constrInfo.Name;
         }
-
-        private static string GetTypeAccessorModifiers(System.Reflection.MethodInfo methodInfo)
+        private static string GetTypeAccessorModifiers(ConstructorInfo constrInfo)
         {
-            if (methodInfo.IsPublic)
+            // new 
+            if (constrInfo.IsPublic)
                 return "public";
-            if (methodInfo.IsPrivate)
+            if (constrInfo.IsPrivate)
                 return "private";
-            if (methodInfo.IsFamily)
+            if (constrInfo.IsFamily)
                 return "protected";
-            if (methodInfo.IsAssembly)
+            if (constrInfo.IsAssembly)
                 return "internal";
-            if (methodInfo.IsFamilyOrAssembly)
+            if (constrInfo.IsFamilyOrAssembly)
                 return "protected internal";
 
             return "";
         }
-
-        private static string GetType(PropertyInfo propertyInfo)
+        private static string GetConstructArguments(ConstructorInfo constrInfo)
         {
-            return propertyInfo.PropertyType.IsGenericType ? GetGenericType(propertyInfo.PropertyType) : propertyInfo.PropertyType.Name;
+            var stringBuilder = new StringBuilder("(");
+
+            foreach (var parameter in constrInfo.GetParameters())
+            {
+                string parameterType;
+                if (parameter.ParameterType.IsGenericType)
+                {
+                    parameterType = GetGenericType(parameter.ParameterType);
+                }
+                else parameterType = parameter.ParameterType.ToString();
+
+                stringBuilder.Append(parameterType).Append(" ").Append(parameter.Name).Append(",");
+            }
+
+            if (stringBuilder.Length > 1)
+                stringBuilder.Remove(stringBuilder.Length - 1, 1);
+
+            stringBuilder.Append(")");
+
+            return stringBuilder.ToString();
+
         }
 
         private static string GetGenericType(Type parameter)
@@ -65,6 +69,7 @@ namespace AssemblyBrowserLib.Data.MembersInfo
             {
                 stringBuilder.Append(GetGenericArgumentsType(parameter.GenericTypeArguments));
             }
+
             stringBuilder.Append(">");
 
             return stringBuilder.ToString();
@@ -89,6 +94,7 @@ namespace AssemblyBrowserLib.Data.MembersInfo
             stringBuilder.Remove(stringBuilder.Length - 2, 2);
 
             return stringBuilder.ToString();
+
         }
     }
 }
